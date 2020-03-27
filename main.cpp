@@ -1,47 +1,44 @@
 #include <iostream>
-#include <fstream>
+#include <memory>
 
+int GetFileLength (FILE *in ) {
+    int length = 0;
 
-int GetFileLength ( std::ifstream& in ) {
-
-    int length;
-
-    in.seekg(0,in.end);
-    length = in.tellg();
-    in.seekg(0, in.beg);
-
+    while (fgetc(in) != EOF) {
+        ++length;
+    }
     return length;
 }
 
-std::string toUpper64bytes(std::ifstream& in, int pos) {
-    char buffer[64];
+void toUpper64bytes (FILE *in, FILE *out, int pos) {
 
-    in.seekg(pos);
-    in.read(buffer,64);
+    char* Buffer;
 
-    for(int i = 0; i < 64; ++i) {
-        buffer[i] = toupper(buffer[i]);
+    for (int i=0; i<64; i++) {
+        Buffer = &in[i];
+    }
+    return Buffer;
+};
+
+int main(int argc, char *argv[]) {
+
+    FILE * inputFile;
+    FILE * outputFile;
+
+    inputFile = fopen ("../source.txt" , "r");
+    outputFile = fopen ("../output.txt" , "w");
+
+    if(inputFile == nullptr || outputFile == nullptr) {
+        std::cerr << "Error opening the file" << std::endl;
+        return 0;
     }
 
-    return buffer;
-}
-
-int main() {
-    std::ifstream input;
-    std::ofstream output;
-    input.open("../source.txt");
-    output.open("../output.txt");
-
-    if( !( input.is_open() && output.is_open() ) ) {
-        std::cout << "File opens with errors or file does not exist" << std::endl;
+    for ( int i = 0; i <= GetFileLength (inputFile); i+=64) {
+        toUpper64bytes(inputFile, outputFile, i);
     }
 
-    for (int i = 0; i <= GetFileLength(input) ; i+=64 ) {
-        output << toUpper64bytes(input, i);
-    }
-
-    input.close();
-    output.close();
+    fclose(inputFile);
+    fclose(outputFile);
 
     return 0;
 }
