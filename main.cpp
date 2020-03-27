@@ -10,14 +10,10 @@ int GetFileLength (FILE *in ) {
     return length;
 }
 
-void toUpper64bytes (FILE *in, FILE *out, int pos) {
-
-    char* Buffer;
-
-    for (int i=0; i<64; i++) {
-        Buffer = &in[i];
+void toUpper64bytes (FILE const& in, FILE & out, int pos) {
+    for (int i= 0; i<64; ++i) {
+        *(out+i) = toupper(*(in+i));
     }
-    return Buffer;
 };
 
 int main(int argc, char *argv[]) {
