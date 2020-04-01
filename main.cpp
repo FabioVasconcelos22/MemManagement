@@ -64,11 +64,11 @@ public:
 
         FreeBlock* aux = Free;
 
-        Free = Free->next;
-
-        if(Free->next == nullptr) {
+        if(Free == nullptr) {
             throw "FULL_CAPACITY";
         }
+
+        Free = Free->next;
 
         return aux;
     }
@@ -99,6 +99,7 @@ int main(int argc, char *argv[]) {
 
     int* ptr;
     int* ptr1;
+    int* ptr2;
 
     VirtualMemory VM (16, 4);
 
@@ -110,6 +111,7 @@ int main(int argc, char *argv[]) {
     VM.DebugMem();
 
     ptr = (int*)VM.AllocMem(16);
+    ptr2 = ptr;
 
     *ptr = 0xBB;
 
@@ -141,6 +143,41 @@ int main(int argc, char *argv[]) {
 
     VM.DebugMem();
 
+    ptr = (int*)VM.AllocMem(16);
+
+    *ptr = 0xFF;
+
+    VM.DebugMem();
+
+    ptr = (int*)VM.AllocMem(16);
+
+    *ptr = 0xCC;
+
+    VM.DebugMem();
+
+    ptr1 = (int*)VM.DeallocMem(ptr1);
+
+    VM.DebugMem();
+
+    ptr = (int*)VM.AllocMem(16);
+
+    *ptr = 0x03;
+
+    ptr2 = (int*)VM.DeallocMem(ptr2);
+
+    VM.DebugMem();
+
+    ptr = (int*)VM.AllocMem(16);
+
+    *ptr = 0x01;
+
+    VM.DebugMem();
+
+    /*ptr = (int*)VM.AllocMem(16);
+
+    *ptr = 0x02;
+
+    VM.DebugMem();*/
 
     return 0;
 }
