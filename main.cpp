@@ -56,6 +56,11 @@ public:
         std::cout << "Destructed" << std::endl;
     }
 
+    template < typename _t >
+    _t* alloc () {
+        return new (AllocMem(sizeof(_t))) _t;
+    }
+
     void* AllocMem (int size) {
 
         if (size > BlockSize) {
@@ -97,11 +102,27 @@ private:
 
 int main(int argc, char *argv[]) {
 
-    int* ptr;
+    struct my_struct {
+        uint8_t x;
+        uint16_t y;
+        uint32_t z;
+        uint64_t w;
+    };
+
+    VirtualMemory pool (16, 4);
+
+    my_struct* ptr = pool.alloc < my_struct > ();
+
+    ptr->x = 0x0F;
+    ptr->y = 0x0A; // Porque raio isto aparece no 3º byte, em vez do 2º?
+    ptr->z = 0xAA;
+    ptr->w = 0xBB;
+
+    pool.DebugMem();
+
+    /*int* ptr;
     int* ptr1;
     int* ptr2;
-
-    VirtualMemory VM (16, 4);
 
     ptr = (int*)VM.AllocMem(16);
     ptr1 = ptr,
@@ -115,11 +136,11 @@ int main(int argc, char *argv[]) {
 
     *ptr = 0xBB;
 
-    /**ptr = 0x0F;
-    *(ptr+1) = 0x0A;
-    *(ptr+2) = 0x0B;
-    *(ptr+3) = 0x01;
-    *(ptr+4) = 0x00;*/ //Recebenta a memória
+    //ptr = 0x0F;
+    //*(ptr+1) = 0x0A;
+    //*(ptr+2) = 0x0B;
+    //*(ptr+3) = 0x01;
+    //*(ptr+4) = 0x00; //Recebenta a memória
 
     VM.DebugMem();
 
@@ -173,11 +194,11 @@ int main(int argc, char *argv[]) {
 
     VM.DebugMem();
 
-    /*ptr = (int*)VM.AllocMem(16);
+    //ptr = (int*)VM.AllocMem(16);
 
-    *ptr = 0x02;
+    //*ptr = 0x02;
 
-    VM.DebugMem();*/
+    //VM.DebugMem();*/
 
     return 0;
 }
